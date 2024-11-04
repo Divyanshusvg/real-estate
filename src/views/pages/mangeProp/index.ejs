@@ -1,0 +1,349 @@
+<!--*******************
+        Preloader start
+    ********************-->
+    <body>
+
+        <div id="preloader">
+            <div class="sk-three-bounce">
+                <div class="sk-child sk-bounce1"></div>
+                <div class="sk-child sk-bounce2"></div>
+                <div class="sk-child sk-bounce3"></div>
+            </div>
+        </div>
+        <!--*******************
+                Preloader end
+            ********************-->
+        
+        
+        <!--**********************************
+                Main wrapper start
+            ***********************************-->
+        <div id="main-wrapper">
+            <%- include('../../partials/header') %>
+                <%- include('../../partials/sideBar') %>
+                    <div class="content-body">
+                        <!-- row -->
+                        <div class="container-fluid">
+                            <div class="card shadow">
+                                <div class="card-header border-0 d-flex justify-content-between mb-4 align-items-center">
+                                    <h3 class="mb-0">Property Type</h3>
+                                    <button type="button" class="btn btn-sm btn-primary" data-toggle="modal"
+                                        data-target="#addModal">
+                                        <i class="fa fa-plus"></i> Add Property Type
+                                    </button>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="dataTable table align-items-center table-flush">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Name</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% propertyType.docs.forEach((element, index)=> { %>
+                                                <tr>
+                                                    <td>
+                                                        <h6>
+        
+                                                            <%= index + 1 %>
+                                                        </h6>
+                                                    </td>
+                                                    <td class=" text-black ">
+                                                        <h6>
+        
+                                                            <%= element.name %>
+                                                        </h6>
+                                                    </td>
+                                                    <td>
+                                                        <% if ( element.status==1 ) { %>
+                                                            <span class="badge badge-rounded badge-success">Active</span>
+        
+        
+                                                            <% } else { %>
+                                                                <span class="badge badge-rounded badge-danger">Inactive</span>
+                                                                <% } %>
+        
+        
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal"
+                                                            data-target="#editModal" data-id="<%= element._id %>"
+                                                            data-name="<%= element.name %>" data-status="<%= element.status %>">
+                                                            <i class="fa fa-edit"></i> Edit
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-danger" data-toggle="modal"
+                                                            data-target="#deleteModal" data-id="<%= element._id %>"
+                                                            data-name="<%= element.name %>">
+                                                            <i class="fa fa-trash"></i> Delete
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <% }) %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+        
+                         
+        
+        
+        
+        
+        
+        
+        
+                        </div>
+                    </div>
+                    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editModalLabel">Edit Property Type</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="editForm">
+                                    <div class="form-group">
+                                        <label for="editPropertyName">Name</label>
+                                        <input type="text" class="form-control" id="editPropertyName" name="name" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="editPropertyStatus">Status</label>
+                                        <select class="form-control" id="editPropertyStatus" name="status" required>
+                                            <option value="1">Active</option>
+                                            <option value="0">Inactive</option>
+                                        </select>
+                                    </div>
+                                    <input type="hidden" id="editPropertyId" name="id">
+                                    <!-- Add other fields as necessary -->
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" id="saveEditChanges">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Add Modal -->
+                <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addModalLabel">Add Property Type</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="addForm">
+                                    <div class="form-group">
+                                        <label for="addPropertyName">Name</label>
+                                        <input type="text" class="form-control" id="addPropertyName" name="name" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addPropertyStatus">Status</label>
+                                        <select class="form-control" id="addPropertyStatus" name="status" required>
+                                            <option value="1">Active</option>
+                                            <option value="0">Inactive</option>
+                                        </select>
+                                    </div>
+                                    <!-- Add other fields as necessary -->
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" id="saveAddChanges">Add Property Type</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Delete Modal -->
+                <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel">Delete Property Type</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to delete the property type <strong id="deletePropertyName"></strong>?</p>
+                                <form id="deleteForm">
+                                    <input type="hidden" id="deletePropertyId" name="id">
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                                <button type="button" class="btn btn-danger" id="confirmDelete">Yes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    <%- include('../../partials/footer') %>
+                       
+        </div>
+        <script>
+            // Script to populate the edit modal with existing data
+            $('#editModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Button that triggered the modal
+                var name = button.data('name'); // Extract info from data-* attributes
+                var status = button.data('status');
+                var id = button.data('id'); // Extract info from data-* attributes
+        
+                // Update the modal's content
+                var modal = $(this);
+                modal.find('.modal-body input#editPropertyName').val(name);
+                modal.find('.modal-body select#editPropertyStatus').val(status);
+                modal.find('.modal-body input#editPropertyId').val(id);
+            });
+        
+            // Script to handle save changes for edit form
+            $('#saveEditChanges').on('click', function () {
+                var form = $('#editForm');
+                var data = {
+                    name: form.find('#editPropertyName').val(),
+                    status: form.find('#editPropertyStatus').val(),
+                    editId: form.find('#editPropertyId').val()
+                };
+        
+                var id = form.find('#editPropertyId').val();
+                console.log(id)
+                // Perform API call to update the property type using fetch
+                fetch(`/proptype`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                })
+                    .then(response => response.json())
+                    .then(result => {
+                        // Handle successful update
+                        location.reload();
+                    })
+                    .catch(error => {
+                        // Handle error
+                        console.error('Error updating property type:', error);
+                    });
+            });
+            $('#saveAddChanges').on('click', function () {
+                var form = $('#addForm');
+                var data = {
+                    name: form.find('#addPropertyName').val(),
+                    status: form.find('#addPropertyStatus').val()
+                };
+        
+                // Perform API call to add the property type using fetch
+                fetch('/proptype', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                })
+                    .then(response => response.json())
+                    .then(result => {
+                        // Handle successful addition
+                        location.reload();
+                    })
+                    .catch(error => {
+                        // Handle error
+                        console.error('Error adding property type:', error);
+                    });
+            });
+            $('#saveEditChanges').on('click', function () {
+                var form = $('#editForm');
+                var data = {
+                    name: form.find('#editPropertyName').val(),
+                    status: form.find('#editPropertyStatus').val(),
+                    editId: form.find('#editPropertyId').val(),
+                    categoryId: form.find('#editPropertyCategoryId').val()  // Add this line
+                };
+
+                var id = form.find('#editPropertyId').val();
+                console.log(id);
+
+                // Perform API call to update the property type using fetch
+                fetch(`/proptype`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    // Handle successful update
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        console.error('Error updating property type:', result.message);
+                        alert(`Error: ${result.message || 'Unknown error occurred'}`);
+                    }
+                })
+                .catch(error => {
+                    // Handle error
+                    console.error('Error updating property type:', error);
+                    alert('An error occurred while updating the property type. Please try again.');
+                });
+            });
+
+            
+            // Script to populate the delete modal with existing data
+            $('#deleteModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Button that triggered the modal
+                var name = button.data('name');
+                var id = button.data('id');
+        
+                // Update the modal's content
+                var modal = $(this);
+                modal.find('#deletePropertyName').text(name);
+                modal.find('#deletePropertyId').val(id);
+            });
+        
+        
+            // Script to handle delete confirmation
+            $('#confirmDelete').on('click', function () {
+                var form = $('#deleteForm');
+                var id = form.find('#deletePropertyId').val();
+                var data = {
+                    editId: form.find('#deletePropertyId').val(),
+                    del: "1"
+                };
+                // Perform API call to delete the property type using fetch
+                fetch('/proptype', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                })
+                    .then(response => response.json())
+                    .then(result => {
+                        // Handle successful addition
+                        location.reload();
+                    })
+                    .catch(error => {
+                        // Handle error
+                        console.error('Error adding property type:', error);
+                    });
+            });
+        </script>
+                
+        </body>

@@ -1,0 +1,354 @@
+<!--*******************
+    Preloader start
+********************-->
+<body>
+    <div id="preloader">
+        <div class="sk-three-bounce">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
+        </div>
+    </div>
+    <!--*******************
+        Preloader end
+    ********************-->
+
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper">
+        <%- include('../../partials/header') %>
+        <%- include('../../partials/sideBar') %>
+        <div class="content-body">
+            <!-- row -->
+            <div class="container-fluid">
+                <div class="card shadow">
+                    <div class="card-header border-0 d-flex justify-content-between mb-4 align-items-center">
+                        <h3 class="mb-0">Sub Category</h3>
+                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">
+                            <i class="fa fa-plus"></i> Add Sub Category
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="dataTable table align-items-center table-flush">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Category Name</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Category</th>
+                                    <th scope="col">Created At</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (subPropertyType.docs.length > 0) { %>
+                                    <% subPropertyType.docs.forEach((subCategory, index) => { %>
+                                        <tr>
+                                            <td class=" text-black ">
+                                                <h6>
+                                                    <%= index + 1 %>
+                                                </h6>
+                                            </td>
+                                            <td class=" text-black ">
+                                                <h6>
+                                                    <%= subCategory.name %>
+                                                </h6>
+                                            </td>
+                                            <td class="text-black">
+                                                <span class="badge badge-rounded <%= subCategory.status === 1 ? 'badge-success' : 'badge-danger' %>">
+                                                    <%= subCategory.status === 1 ? 'Active' : 'Inactive' %>
+                                                </span>
+                                            </td>
+                                            <td class=" text-black ">
+                                                <h6>
+                                                    <%= subCategory.categoryDetails.length > 0 ? subCategory.categoryDetails[0].name : 'N/A' %>
+                                                </h6>
+                                            </td>
+                                            <td class=" text-black ">
+                                                <h6>
+                                                    <%= new Date(subCategory.createdAt).toLocaleDateString()%>
+                                                </h6>
+                                            </td>
+                                            <td>
+                                                <!-- Edit and Delete Buttons -->
+                                                <button type="button" class="btn btn-sm btn-primary" 
+                                                    data-toggle="modal"
+                                                    data-target="#editModal" 
+                                                    data-id="<%= subCategory._id %>"
+                                                    data-name="<%= subCategory.name %>" 
+                                                    data-status="<%= subCategory.status %>"
+                                                    data-category-id="<%= subCategory.categoryId %>"> <!-- Add this line -->
+                                                <i class="fa fa-edit"></i> Edit
+                                            </button>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="5">No sub property categories found.</td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                        <!-- pagination -->
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-end mr-3">
+                              <li class="page-item <%= subPropertyType.page === 1 ? 'disabled ' : '' %>">
+                                <a
+                                  class="page-link"
+                                  href="?page=<%= subPropertyType.page - 1 %>&limit=<%= subPropertyType.limit %>"
+                                  aria-label="Previous"
+                                >
+                                  <span aria-hidden="true">&laquo;</span>
+                                </a>
+                              </li>
+                              <% for (let i = 1; i <= Math.ceil(subPropertyType.totalDocs / subPropertyType.limit);
+                              i++) { %>
+                              <li class="page-item <%= subPropertyType.page === i ? 'active' : '' %>">
+                                <a
+                                  class="page-link"
+                                  href="?page=<%= i %>&limit=<%= subPropertyType.limit %>"
+                                  ><%= i %></a
+                                >
+                              </li>
+                              <% } %>
+                              <li
+                                class="page-item <%= subPropertyType.page === Math.ceil(subPropertyType.totalDocs / subPropertyType.limit) ? 'disabled' : '' %>"
+                              >
+                                <a
+                                  class="page-link"
+                                  href="?page=<%= subPropertyType.page + 1 %>&limit=<%= subPropertyType.limit %>"
+                                  aria-label="Next"
+                                >
+                                  <span aria-hidden="true">&raquo;</span>
+                                </a>
+                              </li>
+                            </ul>
+                          </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addModalLabel">Add Sub Category Type</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addForm">
+                        <div class="form-group">
+                            <label for="addPropertyName">Name</label>
+                            <input type="text" class="form-control" id="addPropertyName" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="addPropertyCategory">Category</label>
+                            <select class="form-control" id="addPropertyCategory" name="category" required>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="addPropertyStatus">Status</label>
+                            <select class="form-control" id="addPropertyStatus" name="status" required>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveAddChanges">Add Sub Category Type</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Sub Category Type</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm">
+                        <div class="form-group">
+                            <label for="editPropertyName">Name</label>
+                            <input type="text" class="form-control" id="editPropertyName" name="name" required>
+                        </div>
+                        <div class="form-group">
+                        <label for="editPropertyCategory">Category</label>
+                        <select class="form-control" id="editPropertyCategory" name="category" required>
+                        </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editPropertyStatus">Status</label>
+                            <select class="form-control" id="editPropertyStatus" name="status" required>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+                        <input type="hidden" id="editPropertyId" name="id">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveEditChanges">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <%- include('../../partials/footer') %>
+    </div>  
+    
+    <script>
+        $(document).ready(function() {
+        // Add Modal Show Event
+        $('#addModal').on('show.bs.modal', function () {
+            const $addPropertyCategory = $('#addPropertyCategory');
+            $addPropertyCategory.empty();
+
+            fetch('/api/v1/users/other/getOtherPropertyList')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.data.docs) {
+                        data.data.docs.forEach(property => {
+                            const option = $('<option></option>').val(property._id).text(property.name);
+                            $addPropertyCategory.append(option);
+                        });
+                    } else {
+                        console.error('Failed to fetch property list');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching property list:', error);
+                });
+        });
+
+        // Save Add Changes
+        $('#saveAddChanges').on('click', function() {
+            const propertyName = $('#addPropertyName').val();
+            const propertyCategory = $('#addPropertyCategory').val();
+            const propertyStatus = $('#addPropertyStatus').val();
+
+            const formData = {
+                name: propertyName,
+                catId: propertyCategory,
+                status: propertyStatus
+            };
+            console.log(formData);
+
+            fetch('/subPropertyTypeCreate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    $('#addModal').modal('hide');
+                    location.reload(); // Refresh the page
+                } else {
+                    console.error('Failed to add subcategory:', data.message || 'Unknown error');
+                    alert(`Error: ${data.message || 'Unknown error occurred'}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error adding subcategory:', error);
+                alert('An error occurred while adding the subcategory. Please try again.');
+            });
+        });
+
+        // Edit Modal Show Event
+        $('#editModal').on('show.bs.modal', function (event) {
+            const button = $(event.relatedTarget);
+            const name = button.data('name');
+            const status = button.data('status');
+            const id = button.data('id');
+
+            const modal = $(this);
+            modal.find('#editPropertyName').val(name);
+            modal.find('#editPropertyStatus').val(status);
+            modal.find('#editPropertyId').val(id);
+        });
+
+        $('#editModal').on('show.bs.modal', function (event) {
+            const button = $(event.relatedTarget);
+            const name = button.data('name');
+            const status = button.data('status');
+            const id = button.data('id');
+            const categoryId = button.data('categoryId'); 
+
+            const modal = $(this);
+            modal.find('#editPropertyName').val(name);
+            modal.find('#editPropertyStatus').val(status);
+            modal.find('#editPropertyId').val(id);
+            modal.find("#editPropertyCategory").val(categoryId)
+
+            // Populate category dropdown in edit modal
+            const $editPropertyCategory = $('#editPropertyCategory');
+            $editPropertyCategory.empty();
+
+            fetch('/api/v1/users/other/getOtherPropertyList')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.data.docs) {
+                        data.data.docs.forEach(property => {
+                            const option = $('<option></option>').val(property._id).text(property.name);
+                            $editPropertyCategory.append(option);
+                        });
+                    } else {
+                        console.error('Failed to fetch property list');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching property list:', error);
+                });
+        });
+        // Save Edit Changes
+        $('#saveEditChanges').on('click', function () {
+            const formData = {
+                editId: $('#editPropertyId').val(),
+                name: $('#editPropertyName').val(),
+                status: $('#editPropertyStatus').val(),
+                catId:$('#editPropertyCategory').val()
+                
+            };
+            fetch('/subPropertyTypeCreate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    $('#editModal').modal('hide');
+                    location.reload();
+                } else {
+                    console.error('Error updating property:', result.message);
+                    alert(`Error: ${result.message || 'Unknown error occurred'}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error updating property:', error);
+                alert('An error occurred while updating the property. Please try again.');
+            });
+        });
+    });
+</script>
+
+</body>
+
+
+

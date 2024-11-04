@@ -1,0 +1,57 @@
+<div class="authincation h-100 ">
+    <div class="container-fluid h-100">
+        <div class="row justify-content-center h-100 align-items-center">
+            <div class="col-md-6">
+                <div class="authincation-content">
+                    <div class="row no-gutters">
+                        <div class="col-xl-12">
+                            <div class="auth-form">
+                                <div class="row justify-content-center" >
+
+                                    <img class="logo-abbr w-25" src="<%= siteUrl %>/images/logo.svg" alt="">
+                                </div>
+                              
+                                <form role="form" action="<%= siteUrl %>/login" method="POST">
+                                    <% if (error ) { %>
+                                        <div class="alert alert-danger alert-dismissible fade show mt-3">
+                                            <button type="button" class="close h-100" data-dismiss="alert" aria-label="Close"><span><i class="mdi mdi-close"></i></span>
+                                            </button>
+                                            <strong>Error!</strong> <%= error?.password || error?.email %>
+                                        </div>
+                                    <% } %>
+                                    <div class="form-group">
+                                        <label><strong>Email</strong></label>
+                                        <input type="email" class="form-control"  name="email" placeholder="Email" >
+                                    </div>
+                                    <div class="form-group">
+                                        <label><strong>Password</strong></label>
+                                        <input type="password" class="form-control" name="password" placeholder="Password" >
+                                    </div>
+                                    <div class="form-row d-flex justify-content-between mt-4 mb-2">
+                                      
+                                        <div class="form-group">
+                                            <a href="<%= siteUrl %>/forgotpassword">Forgot Password?</a>
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                                    </div>
+                                </form>
+                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--**********************************
+    Scripts
+***********************************-->
+<!-- Required vendors -->
+<script src="./vendor/global/global.min.js"></script>
+<script src="./js/quixnav-init.js"></script>
+<script src="./js/custom.min.js"></script>

@@ -1,0 +1,294 @@
+<!--*******************
+        Preloader start
+    ********************-->
+<div id="preloader">
+  <div class="sk-three-bounce">
+    <div class="sk-child sk-bounce1"></div>
+    <div class="sk-child sk-bounce2"></div>
+    <div class="sk-child sk-bounce3"></div>
+  </div>
+</div>
+<!--*******************
+            Preloader end
+        ********************-->
+
+<!--**********************************
+            Main wrapper start
+        ***********************************-->
+<div id="main-wrapper">
+  <%- include('../../partials/header') %> <%- include('../../partials/sideBar')
+  %>
+
+  <div class="content-body">
+    <div class="container-fluid">
+      <div class="card shadow">
+        <div
+          class="card-header border-0 d-flex justify-content-between mb-4 align-items-center"
+        >
+          <h3 class="mb-0">User List</h3>
+          <!-- <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">
+                            <i class="fa fa-plus"></i> Add User
+                        </button> -->
+        </div>
+        <div class="d-flex mx-4 justify-content-between mb-4">
+          <!-- Search Input -->
+          <input
+            type="text"
+            id="searchInput"
+            class="form-control"
+            placeholder="Search Properties"
+            style="width: 300px"
+          />
+
+          <!-- Limit Dropdown -->
+          <select id="limitSelect" class="form-control" style="width: 150px">
+            <option value="10">10 per page</option>
+            <option value="25">25 per page</option>
+            <option value="50">50 per page</option>
+            <option value="100">100 per page</option>
+          </select>
+        </div>
+        <div class="table-responsive">
+          <table class="dataTable table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">User-Type</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% users?.docs?.forEach((user, index) => { %>
+              <tr>
+                <td>
+                  <h6><%= index + 1 %></h6>
+                </td>
+                <td class="text-black">
+                  <h6><%= user.userName %></h6>
+                </td>
+                <td class="text-black">
+                  <h6><%= user.email %></h6>
+                </td>
+                <td class="text-black">
+                  <% let userType; switch(user.userType) { case '0': userType =
+                  "Normal"; break; case '1': userType = "Professional"; break;
+                  case '2': userType = "Individual"; break; default: userType =
+                  "Unknown"; } %>
+                  <h6><%= userType %></h6>
+                </td>
+                <td>
+                  <% if (user.isVerified) { %>
+                  <button class="btn btn-outline-success btn-sm">
+                    Verified
+                  </button>
+                  <% } else { %>
+                  <button class="btn btn-outline-danger btn-sm">
+                    Not Verified
+                  </button>
+                  <% } %>
+                </td>
+
+                <td>
+                  <!-- User verify button -->
+                  <button
+                    type="button"
+                    class="btn btn-sm <% if (user.isVerified) { %>btn-outline-success<% } else { %>btn-outline-danger<% } %> rounded-circle"
+                    style="margin-right: 50px"
+                    title="<%= user.isVerified ? 'Validated' : 'Not Validated' %>"
+                    data-toggle="modal"
+                    data-target="#verificationModal"
+                    data-id="<%= user._id %>"
+                    data-is-verified="<%= user.isVerified %>"
+                  >
+                    <i
+                      class="fa <% if (user.isVerified) { %>fa-check<% } else { %>fa-times<% } %>"
+                    ></i>
+                  </button>
+
+                  <!-- EYE Button -->
+                  <a
+                    href="<%= siteUrl %>/details?userId=<%= user._id %>"
+                    class="btn btn-sm btn-primary rounded-circle"
+                  >
+                    <i class="fa fa-eye"></i>
+                  </a>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+          <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-end mr-3">
+              <li class="page-item <%= users.page === 1 ? 'disabled ' : '' %>">
+                <a
+                  class="page-link"
+                  href="?page=<%= users.page - 1 %>&limit=<%= users.limit %>"
+                  aria-label="Previous"
+                >
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+              <% for (let i = 1; i <= Math.ceil(users.totalDocs / users.limit);
+              i++) { %>
+              <li class="page-item <%= users.page === i ? 'active' : '' %>">
+                <a
+                  class="page-link"
+                  href="?page=<%= i %>&limit=<%= users.limit %>"
+                  ><%= i %></a
+                >
+              </li>
+              <% } %>
+              <li
+                class="page-item <%= users.page === Math.ceil(users.totalDocs / users.limit) ? 'disabled' : '' %>"
+              >
+                <a
+                  class="page-link"
+                  href="?page=<%= users.page + 1 %>&limit=<%= users.limit %>"
+                  aria-label="Next"
+                >
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Verification Status Modal -->
+      <div
+        class="modal fade"
+        id="verificationModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="verificationModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="verificationModalLabel">
+                Change Verification Status
+              </h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>
+                Are you sure you want to
+                <span id="verificationAction"></span> this user?
+              </p>
+              <input type="hidden" id="hiddenUserId" />
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="confirmVerificationChange"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%- include('../../partials/footer') %>
+</div>
+
+<!-- Add your JavaScript files here -->
+<!-- Include jQuery -->
+
+<script>
+  $(document).ready(function () {
+    // When the verification modal is shown
+    $("#verificationModal").on("show.bs.modal", function (event) {
+      var button = $(event.relatedTarget); // Button that triggered the modal
+      var userId = button.data("id"); // Extract info from data-* attributes
+      var action = button.data("is-verified") ? "Unverify" : "Verify"; // Determine action based on verification status
+      console.log(userId);
+      // Update the modal's content
+      var modal = $(this);
+      modal.find("#hiddenUserId").val(userId);
+      modal.find("#verificationAction").text(action);
+    });
+
+    $("#confirmVerificationChange").on("click", function () {
+      var userId = $("#hiddenUserId").val();
+      var isVerified = $("#verificationAction").text().trim() === "Verify"; // Determine new verification status
+
+      console.log("User ID:", userId);
+      console.log("New isVerified:", isVerified);
+
+      // Send AJAX request to update user verification status
+      $.ajax({
+        url: "/updateVerificationStatus", // Update this URL if needed
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+          userId: userId,
+          isVerified: isVerified, // Send the new verification status
+        }),
+        success: function (response) {
+          console.log("Server response:", response);
+          if (response.success) {
+            // Update UI or reload the page to reflect changes
+            location.reload(); // Reload the page to see changes
+          } else {
+            // Handle error response
+            alert("Error updating user status.");
+          }
+        },
+        error: function (xhr, status, error) {
+          console.log("AJAX Error:", error);
+          // Handle AJAX error
+          alert("An error occurred while updating user status.");
+        },
+      });
+    });
+    // Search functionality
+    $("#searchInput").on("keyup", function () {
+      const value = $(this).val().toLowerCase();
+      $(".dataTable tbody tr").each(function () {
+        const row = $(this);
+        const text = row.text().toLowerCase();
+        row.toggle(text.indexOf(value) > -1);
+      });
+    });
+
+    // Limit dropdown functionality
+    $("#limitSelect").on("change", function () {
+      const limit = $(this).val();
+      const url = new URL(window.location.href);
+      url.searchParams.set("limit", limit);
+      url.searchParams.set("page", 1); // Reset to the first page when changing the limit
+      window.location.href = url.toString();
+      // Update the limit in the URL or make an AJAX request to fetch the new limit
+      // For example:
+    });
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    // Set the limit dropdown value based on URL parameter
+    const limit = getQueryParam("limit") || "10"; // Default to 10 if no limit is provided
+    $("#limitSelect").val(limit);
+  });
+</script>

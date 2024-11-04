@@ -1,0 +1,291 @@
+
+<html>
+
+
+</html>
+
+<body>
+
+
+    <!--*******************
+        Preloader start
+    ********************-->
+    <div id="preloader">
+        <div class="sk-three-bounce">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
+        </div>
+    </div>
+    <!--*******************
+        Preloader end
+    ********************-->
+
+
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper">
+        <%- include('../../partials/header') %>
+        <%- include('../../partials/sideBar') %>
+        <div class="content-body">
+            <!-- row -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card">
+                            <div class="stat-widget-two card-body">
+                                <div class="stat-content">
+                                    <div class="stat-text">Today Listing </div>
+                                    <div class="stat-digit"> <%= propertiesAddedTodayCount %></div>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-success w-85" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card">
+                            <div class="stat-widget-two card-body">
+                                <div class="stat-content">
+                                    <div class="stat-text">Top Users</div>
+                                    <div class="stat-digit"> 7</div>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-primary w-75" role="progressbar" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card">
+                            <div class="stat-widget-two card-body">
+                                <div class="stat-content">
+                                    <div class="stat-text">Total Users</div>
+                                    <div class="stat-digit" id="total-users-count"><%= count %></div>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-warning w-50" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card">
+                            <div class="stat-widget-two card-body">
+                                <div class="stat-content">
+                                    <div class="stat-text">Total Property</div>
+                                    <div class="stat-digit"> <%= PropertyAddCount %></div>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-danger w-65" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /# card -->
+                    </div>
+                        <div class="card shadow mt-4 w-40 h-10 chart-card" >
+                            <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                                <h3 class="mb-10">Yearly User Activity</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="userLineChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card shadow mt-4 w-40 h-10 chart-card"  style="margin-left: 50px;">
+                            <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                                <h3 class="mb-10">Monthly User Activity</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="userLineChartMonthly"></canvas>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+        <%- include('../../partials/footer') %>
+    
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fetch user count
+            fetch('/dashboard')
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.count !== undefined) {
+                        // Update the Total Users card with the fetched count
+                        document.querySelector('#total-users-count').textContent = data.count;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching user count:', error);
+                });
+    // Fetch monthly user statistics
+    fetch('/getMonthlyUserStatistics', {
+        method: 'POST', // Specify POST method
+        headers: {
+            'Content-Type': 'application/json' // Specify content type if sending JSON
+        },
+        body: JSON.stringify({
+            "type": "1"
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        if (data.success) {
+            const { totals } = data.data;
+            const labels = totals.map(item => item.month);
+            const totalUsersData = totals.map(item => item.totalUsers);
+            const userType1Data = totals.map(item => item.UserType1);
+            const userType2Data = totals.map(item => item.UserType2);
+            const maxTotalUsers = Math.max(...totalUsersData);
+            const suggestedMax = maxTotalUsers ? maxTotalUsers * 2 : 10
+
+            // Initialize the line chart for monthly activity
+            const ctxMonthly = document.getElementById('userLineChart').getContext('2d');
+            new Chart(ctxMonthly, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Total Users',
+                            data: totalUsersData,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Pro Users',
+                            data: userType1Data,
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Individual Users',
+                            data: userType2Data,
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        x: {
+                            beginAtZero: true
+                        },
+                        y: {
+                            beginAtZero: true,
+                                    suggestedMax:suggestedMax,
+                                    ticks:{
+                                        stepSize:1
+                                    }
+                        }
+                    }
+                }
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching monthly user statistics:', error);
+    });
+
+    // Fetch weekly user statistics
+    fetch('/getWeeklyUserStatistics', {
+        method: 'POST', // Specify POST method
+        headers: {
+            'Content-Type': 'application/json' // Specify content type if sending JSON
+        },
+        body: JSON.stringify({
+            "type": "1"
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        if (data.success) {
+            const { totals } = data.data;
+            const labels = totals.map(item => item.day);
+            const totalUsersData = totals.map(item => item.totalUsers);
+            const userType1Data = totals.map(item => item.UserType1);
+            const userType2Data = totals.map(item => item.UserType2);
+            const maxTotalUsers = Math.max(...totalUsersData);
+            const suggestedMax = maxTotalUsers ? maxTotalUsers * 2 : 10
+
+            // Initialize the line chart for weekly activity
+            const ctxWeekly = document.getElementById('userLineChartMonthly').getContext('2d');
+            new Chart(ctxWeekly, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Total Users',
+                            data: totalUsersData,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Pro Users',
+                            data: userType1Data,
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Individual Users',
+                            data: userType2Data,
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                        },
+                        y: {
+                            beginAtZero: true,
+                            suggestedMax: suggestedMax,
+                            ticks:{
+                                stepSize:1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching weekly user statistics:', error);
+    });
+});
+
+    </script>
+    
+</body>
+
+
+// Fetch user count
+            // fetch('/dashboard')
+            //     .then(response => response.json())
+            //     .then(data => {
+            //         if (data && data.count !== undefined) {
+            //             // Update the Total Users card with the fetched count
+            //             document.querySelector('#total-users-count').textContent = data.count;
+            //         }
+            //     })
+            //     .catch(error => {
+            //         console.error('Error fetching user count:', error);
+            //     });

@@ -1,0 +1,282 @@
+<div class="nav-header">
+  <a href="/" class="brand-logo">
+    <img class="w-100" src="./images/logoLite.svg" alt="" />
+    <img class="logo-compact w-100" src="./images/logo-text.svg" alt="" />
+    <img class="brand-title w-100" src="./images/logo-text.svg" alt="" />
+  </a>
+
+  <!-- <div class="nav-control">
+        <div class="hamburger">
+            <span class="line"></span><span class="line"></span><span class="line"></span>
+        </div>
+    </div> -->
+</div>
+<!--**********************************
+    Nav header end
+***********************************-->
+
+<!--**********************************
+    Header start
+***********************************-->
+<!-- <div class="header">
+    <div class="header-content">
+        <nav class="navbar navbar-expand">
+            <div class="collapse navbar-collapse justify-content-between">
+                <div class="header-left">
+                    <div class="search_bar dropdown">
+                        <span class="search_icon p-3 c-pointer" data-toggle="dropdown">
+                            <i class="mdi mdi-magnify"></i>
+                        </span>
+                        <div class="dropdown-menu p-0 m-0">
+                            <form>
+                                <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <ul class="navbar-nav header-right">
+                    <li class="nav-item dropdown header-profile">
+                        <a class="nav-link" href="#" role="button" data-toggle="dropdown">
+                            <i class="mdi mdi-account"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a href="./app-profile.html" class="dropdown-item">
+                                <i class="icon-user"></i>
+                                <span class="ml-2">Profile </span>
+                            </a>
+                           
+                            <a href="<%= siteUrl %>/logout" class="dropdown-item">
+                                <i class="icon-key"></i>
+                                <span class="ml-2">Logout </span>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</div> -->
+
+<div class="nav-header">
+  <a href="/" class="brand-logo">
+    <img class="w-100" src="./images/logoLite.svg" alt="" />
+    <img class="logo-compact w-100" src="./images/logo-text.svg" alt="" />
+    <img class="brand-title w-100" src="./images/logo-text.svg" alt="" />
+  </a>
+
+  <!-- <div class="nav-control">
+        <div class="hamburger">
+            <span class="line"></span><span class="line"></span><span class="line"></span>
+        </div>
+  </div> -->
+</div>
+
+<div class="header">
+  <div class="header-content">
+    <nav class="navbar navbar-expand">
+      <div class="collapse navbar-collapse justify-content-between">
+        <div class="header-left">
+          <div class="search_bar dropdown">
+            <span class="search_icon p-3 c-pointer" data-toggle="dropdown">
+              <i class="mdi mdi-magnify"></i>
+            </span>
+            <div class="dropdown-menu p-0 m-0">
+              <form>
+                <input
+                  class="form-control"
+                  type="search"
+                  placeholder="Search"
+                  aria-label="Search"
+                />
+              </form>
+            </div>
+          </div>
+        </div>
+        <ul class="navbar-nav header-right">
+          <li class="nav-item dropdown header-profile">
+            <a class="nav-link" href="#" role="button" data-toggle="dropdown">
+              <i class="mdi mdi-account"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a href="#" class="dropdown-item" id="forgotPasswordLink">
+                <i class="icon-user"></i>
+                <span class="ml-2">Reset Password</span>
+              </a>
+              <a href="<%= siteUrl %>/logout" class="dropdown-item">
+                <i class="icon-key"></i>
+                <span class="ml-2">Logout</span>
+              </a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+</div>
+<!-- Forgot Password Modal -->
+<div
+  class="modal fade"
+  id="forgotPasswordModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="forgotPasswordModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="forgotPasswordModalLabel">
+          Reset Password
+        </h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="resetPasswordForm">
+          <div class="form-group">
+            <label for="newPassword">New Password</label>
+            <input
+              type="password"
+              class="form-control"
+              id="newPassword"
+              name="newPassword"
+              placeholder="Enter new password"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input
+              type="password"
+              class="form-control"
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="Confirm new password"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">Reset Password</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Single modal for messages -->
+<div
+  class="modal fade"
+  id="messageModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="messageModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle">Message</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Dynamic content goes here -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // const hamburger = document.querySelector('.hamburger');
+    const sidebar = document.querySelector(".sidebar");
+    const forgotPasswordLink = document.getElementById("forgotPasswordLink");
+    const forgotPasswordModal = new bootstrap.Modal(
+      document.getElementById("forgotPasswordModal")
+    );
+    const resetPasswordForm = document.getElementById("resetPasswordForm"); // Define resetPasswordForm
+    const messageModal = new bootstrap.Modal(
+      document.getElementById("messageModal")
+    );
+    const modalTitle = document.getElementById("modalTitle");
+    const modalBody = document.getElementById("modalBody");
+
+    // if (hamburger && sidebar) {
+    //     hamburger.addEventListener('click', () => {
+    //         console.log("clicken");
+    //         sidebar.classList.toggle('show');
+    //     });
+    // } else {
+    //     console.error('Hamburger or sidebar element not found.');
+    // }
+
+    // Show modal for reset password
+    if (forgotPasswordLink) {
+      forgotPasswordLink.addEventListener("click", () => {
+        forgotPasswordModal.show();
+      });
+    }
+
+    // Reset password logic
+    if (resetPasswordForm) {
+      resetPasswordForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const newPassword = document.getElementById("newPassword").value;
+        const confirmPassword =
+          document.getElementById("confirmPassword").value;
+
+        if (newPassword !== confirmPassword) {
+          modalTitle.textContent = "Error";
+          modalBody.textContent = "Passwords do not match.";
+          messageModal.show();
+          return;
+        }
+
+        try {
+          const response = await fetch("/resetPassword", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ newPassword }),
+          });
+
+          if (response.ok) {
+            modalTitle.textContent = "Success";
+            modalBody.textContent = "Password reset successful.";
+            forgotPasswordModal.hide();
+            messageModal.show();
+          } else {
+            const errorData = await response.json();
+            modalTitle.textContent = "Error";
+            modalBody.textContent =
+              "Error resetting password: " + errorData.message;
+            messageModal.show();
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          modalTitle.textContent = "Error";
+          modalBody.textContent =
+            "An error occurred while resetting the password.";
+          messageModal.show();
+        }
+      });
+    }
+  });
+</script>

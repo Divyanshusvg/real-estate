@@ -1,0 +1,222 @@
+<!--*******************
+    Preloader start
+********************-->
+<body>
+    <div id="preloader">
+        <div class="sk-three-bounce">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
+        </div>
+    </div>
+    <!--*******************
+        Preloader end
+    ********************-->
+
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper">
+        <%- include('../../partials/header') %>
+        <%- include('../../partials/sideBar') %>
+        <div class="content-body">
+            <!-- row -->
+            <div class="container-fluid">
+                <div class="card shadow">
+                    <div class="card-header border-0 d-flex justify-content-between mb-4 align-items-center">
+                        <h3 class="mb-0">Users Contacts</h3>
+                    </div>
+                    <div class="d-flex mx-4 justify-content-between mb-4">
+                        <!-- Search Input -->
+                        <input
+                          type="text"
+                          id="searchInput"
+                          class="form-control"
+                          placeholder="Search Contact"
+                          style="width: 300px"
+                        />
+            
+                        <!-- Limit Dropdown -->
+                        <select id="limitSelect" class="form-control" style="width: 150px">
+                          <option value="10">10 per page</option>
+                          <option value="25">25 per page</option>
+                          <option value="50">50 per page</option>
+                          <option value="100">100 per page</option>
+                        </select>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="dataTable table align-items-center table-flush">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">User Name</th>
+                                    <th scope="col">User Email</th>
+                                    <th scope="col">Message</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% contactDetails.docs.forEach((contact, index) => { %>
+                                    <tr>
+                                        <td><%= index + 1 %></td>
+                                        <td><%= contact.userDetails.length > 0 ? contact.userDetails[0].userName : 'N/A' %></td>
+                                        <td><%= contact.userDetails.length > 0 ? contact.userDetails[0].email : 'N/A' %></td>
+                                        <td><%= contact.userEnquiry %></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-primary replyButton" data-contact-id="<%= contact._id %>">
+                                                <i class="fa fa-reply"></i> Reply
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                        <!-- pagination -->
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-end mr-3">
+                              <li class="page-item <%= contactDetails.page === 1 ? 'disabled ' : '' %>">
+                                <a
+                                  class="page-link"
+                                  href="?page=<%= contactDetails.page - 1 %>&limit=<%= contactDetails.limit %>"
+                                  aria-label="Previous"
+                                >
+                                  <span aria-hidden="true">&laquo;</span>
+                                </a>
+                              </li>
+                              <% for (let i = 1; i <= Math.ceil(contactDetails.totalDocs / contactDetails.limit);
+                              i++) { %>
+                              <li class="page-item <%= contactDetails.page === i ? 'active' : '' %>">
+                                <a
+                                  class="page-link"
+                                  href="?page=<%= i %>&limit=<%= contactDetails.limit %>"
+                                  ><%= i %></a
+                                >
+                              </li>
+                              <% } %>
+                              <li
+                                class="page-item <%= contactDetails.page === Math.ceil(contactDetails.totalDocs / contactDetails.limit) ? 'disabled' : '' %>"
+                              >
+                                <a
+                                  class="page-link"
+                                  href="?page=<%= contactDetails.page + 1 %>&limit=<%= contactDetails.limit %>"
+                                  aria-label="Next"
+                                >
+                                  <span aria-hidden="true">&raquo;</span>
+                                </a>
+                              </li>
+                            </ul>
+                          </nav>
+                    </div>
+                </div>
+            </div>
+           <!-- Reply Modal -->
+           <div class="modal fade" id="replyModal" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="replyModalLabel">Reply to Enquiry</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Modal content goes here -->
+                        <form id="replyForm">
+                            <input type="hidden" id="enquiryId" name="enquiryId">
+                            <div class="mb-3">
+                                <label for="replyMessage" class="form-label">Your Reply</label>
+                                <textarea class="form-control" id="replyMessage" name="replyMessage" rows="4" required></textarea>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-sm btn-primary">Send Reply</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Message Modal -->
+        <div class="modal fade" id="messageModal1" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="messageModalLabel">Message</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p id="messageContent1">Message content goes here.</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+        </div>
+        </div>
+        <%- include('../../partials/footer') %>
+    </div>  
+</body>
+<script>
+    $(document).ready(function() {
+    // Handle the click event on the "Reply" button
+    $('.replyButton').on('click', function() {
+        var enquiryId = $(this).data('contact-id');
+        $('#replyMessage').val('');
+        $('#enquiryId').val(enquiryId);
+        $('#replyModal').modal('show'); // Show the modal
+    });
+
+    // Handle form submission
+    $('#replyForm').on('submit', async function(event) {
+        event.preventDefault();
+        var enquiryId = $('#enquiryId').val();
+        var replyMessage = $('#replyMessage').val();
+        var submitButton = $(this).find('button[type="submit"]');
+        submitButton.text('Sending...').prop('disabled', true);
+
+        try {
+            const response = await fetch('/replyToEnquiry', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ enquiryId, replyMessage, contactFlag: true })
+            });
+
+            const result = await response.json();
+            $('#messageContent1').text(result.message); // Set the message content
+            $('#messageModal1').modal('show'); // Show the message modal
+            $('#replyModal').modal('hide'); // Hide the reply modal
+
+        } catch (error) {
+            console.error('Error:', error);
+            $('#messageContent1').text('Failed to send reply.'); // Set error message
+            $('#messageModal1').modal('show'); // Show the message modal
+        }
+        submitButton.text('Send Reply').prop('disabled', false);
+    });
+
+    // Search functionality
+    $("#searchInput").on("keyup", function () {
+        const value = $(this).val().toLowerCase();
+        $(".dataTable tbody tr").each(function () {
+            const row = $(this);
+            const text = row.text().toLowerCase();
+            row.toggle(text.indexOf(value) > -1);
+        });
+    });
+
+    // Limit dropdown functionality
+    $("#limitSelect").on("change", function () {
+        const limit = $(this).val();
+        const url = new URL(window.location.href);
+        url.searchParams.set("limit", limit);
+        url.searchParams.set("page", 1); // Reset to the first page when changing the limit
+        window.location.href = url.toString();
+    });
+});
+
+</script>
+</body>

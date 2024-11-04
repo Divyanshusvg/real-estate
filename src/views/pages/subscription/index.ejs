@@ -1,0 +1,217 @@
+<!--*******************
+    Preloader start
+********************-->
+<body>
+    <div id="preloader">
+        <div class="sk-three-bounce">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
+        </div>
+    </div>
+    <!--*******************
+        Preloader end
+    ********************-->
+
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper">
+        <%- include('../../partials/header') %>
+        <%- include('../../partials/sideBar') %>
+        <div class="content-body">
+            <!-- row -->
+            <div class="container-fluid">
+                <div class="card shadow">
+                    <div class="card-header border-0 d-flex justify-content-between mb-4 align-items-center">
+                        <h3 class="mb-0">Subscription Listing</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="dataTable table align-items-center table-flush">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Plan Name</th>
+                                    <th scope="col">Start Date </th>
+                                    <th scope="col">End Date</th>
+                                    <th scope="col" >Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% subscription.docs.forEach((subscription, index) => { %>
+                                <tr>
+                                    <td class="text-black"><%= index + 1 %></td>
+                                    <td><%= subscription.userDetails[0].userName %></td> <!-- Displaying the userName from the ownerId -->
+                                    <td><%= subscription?.subscriptionplans_details[0]?.planName%></td>
+                                    <!-- Start Date -->
+                                    <td class="text-black"><%= new Date(subscription.createdAt).toLocaleDateString() %></td>
+                                    
+                                    <!-- End Date Calculation -->
+                                    <td>
+                                        <%
+                                            // Get the plan duration from the subscription plan details
+                                            const planDurationInMonths = parseInt(subscription?.subscriptionplans_details[0]?.planDurationInMonths);
+                            
+                                            // Calculate the end date by adding the plan duration to the createdAt date
+                                            const endDate = new Date(subscription.createdAt);
+                                            endDate.setMonth(endDate.getMonth() + planDurationInMonths);
+                            
+                                            // Display the calculated end date
+                                            const endDateString = endDate.toLocaleDateString();
+                                        %>
+                                        <%= endDateString %>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editModal" data-id="<%= subscription._id %>">
+                                            Edit
+                                        </button>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                            </tbody>
+                            
+                        </table>
+                        <!-- pagination -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- addModal? -->
+        <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addModalLabel">Add Sub Category Type</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addForm">
+                        <div class="form-group">
+                            <label for="addPropertyName">Name</label>
+                            <input type="text" class="form-control" id="addPropertyName" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="addPropertyCategory">Category</label>
+                            <select class="form-control" id="addPropertyCategory" name="category" required>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="addPropertyStatus">Status</label>
+                            <select class="form-control" id="addPropertyStatus" name="status" required>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveAddChanges">Add Sub Category Type</button>
+                </div>
+            </div>
+        </div>
+        </div>
+
+
+
+        <!-- editModal -->
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel">Edit Sub</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editForm">
+                            <div class="form-group">
+                                <label for="editSubscriptionStatus">Status</label>
+                                <select class="form-control" id="editSubscriptionStatus" name="status" required>
+                                </select>
+                            </div>
+                            <input type="hidden" id="editPropertyId" name="id">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="saveEditChanges">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include('../../partials/footer') %>
+    </div>  
+    
+    <script>
+       $(document).ready(function() {
+    // Edit Modal Show Event
+        $('#editModal').on('show.bs.modal', function (event) {
+            const button = $(event.relatedTarget);
+            const status = button.data('status');
+            const id = button.data('id');; 
+
+            const modal = $(this);
+            modal.find('#editSubscriptionStatus').val(status);
+            modal.find('#editPropertyId').val(id);
+
+            // Populate category dropdown in edit modal
+            const $editPropertyCategory = $('#editSubscriptionStatus');
+            $editPropertyCategory.empty(); // Clear existing options
+
+            fetch('/getAllSubscriptions')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.data) {
+                        console.log(data)
+                        data.data.forEach(subscription => {
+                            const option = $('<option></option>').val(subscription._id).text(subscription.planName);
+                            $editPropertyCategory.append(option);
+                        });
+                    } else {
+                        console.error('Failed to fetch subscription list');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching subscription list:', error);
+                });
+        });
+
+        // Save Edit Changes
+        $('#saveEditChanges').on('click', function () {
+            const formData = {
+                editId: $('#editPropertyId').val(),
+                planName: $('#editSubscriptionStatus').val()
+            };
+            console.log(formData) //66c6e16b8fd262606426fbf2
+
+            fetch('/editSubscription', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    $('#editModal').modal('hide');
+                    location.reload();
+                } else {
+                    console.error('Error updating property:', result.message);
+                    alert(`Error: ${result.message || 'Unknown error occurred'}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error updating property:', error);
+                alert('An error occurred while updating the property. Please try again.');
+            });
+        });
+    });
+
+    </script>
+
+</body>

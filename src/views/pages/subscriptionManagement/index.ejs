@@ -1,0 +1,334 @@
+<!--*******************
+    Preloader start
+********************-->
+<body>
+    <div id="preloader">
+        <div class="sk-three-bounce">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
+        </div>
+    </div>
+    <!--*******************
+        Preloader end
+    ********************-->
+
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper">
+        <%- include('../../partials/header') %>
+        <%- include('../../partials/sideBar') %>
+        <div class="content-body">
+            <!-- row -->
+            <div class="container-fluid">
+                <div class="card shadow">
+                    <div class="card-header border-0 d-flex justify-content-between mb-4 align-items-center">
+                        <h3 class="mb-0">Subscription Plans</h3>
+                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">
+                            <i class="fa fa-plus"></i> Add Subscription Plans
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="dataTable table align-items-center table-flush">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Plan Name</th>
+                                    <th scope="col">Plan Price</th>
+                                    <th scope="col">Anual Discount %</th>
+                                    <th scope="col">Plan Duration In Months</th>
+                                    <th scope="col">Property Add Limit</th>
+                                    <th scope="col" class="text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    <% adminsubscription?.docs.forEach((subscription, index) => { %>
+                                    <tr>
+                                        <td class="text-black"><%= index + 1 %></td>
+                                        <td><%= subscription.planName %></td>
+                                        <td><%= subscription.planPrice %></td>
+                                        <td><%= subscription.anualDiscount %></td>
+                                        <td><%= subscription.planDurationInMonths %></td>
+                                        <td><%= subscription.propertyAddLimit %></td>
+                                        <td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editModal"
+                                                    data-id="<%= subscription._id %>"
+                                                    data-planName="<%= subscription.planName %>"
+                                                    data-planPrice="<%= subscription.planPrice %>"
+                                                    data-anualDiscount="<%= subscription.anualDiscount %>"
+                                                    data-planDurationInMonths="<%= subscription.planDurationInMonths %>"
+                                                    data-propertyAddLimit="<%= subscription.propertyAddLimit %>">
+                                                    Edit
+                                                </button>
+                                            </td>
+                                    </tr>
+                                    <% }); %>
+                            </tbody>
+                            
+                        </table>
+                        <!-- pagination -->
+                         <!-- pagination -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-end mr-3">
+                  <li class="page-item <%= adminsubscription.page === 1 ? 'disabled ' : '' %>">
+                    <a
+                      class="page-link"
+                      href="?page=<%= adminsubscription.page - 1 %>&limit=<%= adminsubscription.limit %>"
+                      aria-label="Previous"
+                    >
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
+                  </li>
+                  <% for (let i = 1; i <= Math.ceil(adminsubscription.totalDocs / adminsubscription.limit);
+                  i++) { %>
+                  <li class="page-item <%= adminsubscription.page === i ? 'active' : '' %>">
+                    <a
+                      class="page-link"
+                      href="?page=<%= i %>&limit=<%= adminsubscription.limit %>"
+                      ><%= i %></a
+                    >
+                  </li>
+                  <% } %>
+                  <li
+                    class="page-item <%= adminsubscription.page === Math.ceil(adminsubscription.totalDocs / adminsubscription.limit) ? 'disabled' : '' %>"
+                  >
+                    <a
+                      class="page-link"
+                      href="?page=<%= adminsubscription.page + 1 %>&limit=<%= adminsubscription.limit %>"
+                      aria-label="Next"
+                    >
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+  
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+<!-- Add Modal -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">Add Plan</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addForm" action="/addEditSubscriptionPlan" method="POST">
+                    <div class="form-group">
+                        <label for="addPlanName">Plan Name</label>
+                        <input type="text" class="form-control" id="addPlanName" name="planName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="addPlanPrice">Plan Price</label>
+                        <input type="text" class="form-control" id="addPlanPrice" name="planPrice" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="addAnualDiscount">Annual Discount</label>
+                        <input type="text" class="form-control" id="addAnualDiscount" name="anualDiscount" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="addPlanDurationInMonths">Plan Duration In Months</label>
+                        <input type="text" class="form-control" id="addPlanDurationInMonths" name="planDurationInMonths" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="addPlanLimit">Property Add Limit</label>
+                        <input type="text" class="form-control" id="addPlanLimit" name="addPlanLimit" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Plan</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Subscription</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <div class="form-group">
+                        <label for="editPlanName">Plan Name</label>
+                        <input type="text" class="form-control" id="editPlanName" name="planName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPlanPrice">Plan Price</label>
+                        <input class="form-control" id="editPlanPrice" name="planPrice" required>
+                    </div>      
+
+                    <div class="form-group">
+                        <label for="editanualDiscount">anualDiscount</label>
+                        <input class="form-control" id="editanualDiscount" name="anualDiscount" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editplanDurationInMonths">Plan Duration In Months</label>
+                        <input class="form-control" id="editplanDurationInMonths" name="planDurationInMonths" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPlanLimit">Property Add Limit</label>
+                        <input class="form-control" id="editPlanLimit" name="editPlanLimit" required>
+                    </div>
+                    <input type="hidden" id="editId" name="id">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveEditChanges">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+        <%- include('../../partials/footer') %>
+    </div>  
+    
+    <script>
+        $(document).ready(function() {
+            // Add Modal Show Event
+            $('#addModal').on('show.bs.modal', function () {
+                // Reset the form when modal is shown
+                $('#addForm')[0].reset();
+            });
+    
+            // Save Add Changes
+            $('#addForm').on('submit', function(event) {
+                event.preventDefault(); // Prevent the default form submission 
+    
+                const formData = {
+                    planName: $('#addPlanName').val(),
+                    planPrice: $('#addPlanPrice').val(),
+                    anualDiscount: $('#addAnualDiscount').val(),
+                    planDurationInMonths: $('#addPlanDurationInMonths').val(),
+                    propertyAddLimit: $('#addPlanLimit').val()
+                };
+    
+                fetch('/addEditSubscriptionPlan', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        $('#addModal').modal('hide');
+                        location.reload(); // Refresh the page
+                    } else {
+                        console.error('Failed to add plan:', data.message || 'Unknown error');
+                        alert(`Error: ${data.message || 'Unknown error occurred'}`);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error adding plan:', error);
+                    alert('An error occurred while adding the plan. Please try again.');
+                });
+            });
+        });  
+        $('#editModal').on('show.bs.modal', function (event) {
+            const button = $(event.relatedTarget);
+            const planName = button.data('planname');
+            const planPrice = button.data('planprice');
+            const id = button.data('id');
+            const anualDiscount = button.data('anualdiscount'); 
+            const planDurationInMonths = button.data('plandurationinmonths');
+            const propertyAddLimit = button.data('propertyaddlimit');
+            const modal = $(this);
+            modal.find('#editId').val(id);
+            modal.find('#editPlanName').val(planName);
+            modal.find('#editPlanPrice').val(planPrice);
+            modal.find('#editanualDiscount').val(anualDiscount);
+            modal.find("#editplanDurationInMonths").val(planDurationInMonths)
+            modal.find("#editPlanLimit").val(propertyAddLimit)
+
+            fetch('/addEditSubscriptionPlan')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.data.docs) {
+                        data.data.docs.forEach(property => {
+                            const option = $('<option></option>').val(property._id).text(property.name);
+                            $editPropertyCategory.append(option);
+                        });
+                    } else {
+                        console.error('Failed to fetch property list');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching property list:', error);
+                });
+        });
+        // Save Edit Changes
+        $('#saveEditChanges').on('click', function () {
+            const formData = {
+                editId: $('#editId').val(),
+                planName: $('#editPlanName').val(),
+                planPrice: $('#editPlanPrice').val(),
+                anualDiscount: $('#editanualDiscount').val(),
+                planDurationInMonths:$('#editplanDurationInMonths').val(),
+                propertyAddLimit:$('#editPlanLimit').val(),
+                
+            };
+            fetch('/addEditSubscriptionPlan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    $('#editModal').modal('hide');
+                    location.reload();
+                } else {
+                    console.error('Error updating property:', result.message);
+                    alert(`Error: ${result.message || 'Unknown error occurred'}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error updating property:', error);
+                alert('An error occurred while updating the property. Please try again.');
+            });
+            // Search functionality
+    $("#searchInput").on("keyup", function () {
+      const value = $(this).val().toLowerCase();
+      $(".dataTable tbody tr").each(function () {
+        const row = $(this);
+        const text = row.text().toLowerCase();
+        row.toggle(text.indexOf(value) > -1);
+      });
+    });
+
+    // Limit dropdown functionality
+    $("#limitSelect").on("change", function () {
+      const limit = $(this).val();
+      const url = new URL(window.location.href);
+      url.searchParams.set("limit", limit);
+      url.searchParams.set("page", 1); // Reset to the first page when changing the limit
+      window.location.href = url.toString();
+      // Update the limit in the URL or make an AJAX request to fetch the new limit
+      // For example:
+    });
+        });
+
+
+    </script>
+</body>

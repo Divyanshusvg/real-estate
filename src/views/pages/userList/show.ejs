@@ -1,0 +1,251 @@
+<!--*******************
+        Preloader start
+    ********************-->
+    <div id="preloader">
+        <div class="sk-three-bounce">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
+        </div>
+    </div>
+    <!--*******************
+            Preloader end
+        ********************-->
+    
+    <!--**********************************
+            Main wrapper start
+        ***********************************-->
+        <div id="main-wrapper">
+            <%- include('../../partials/header') %>
+            <%- include('../../partials/sideBar') %>
+            <div class="content-body">
+                <input type="hidden" id="userId" value="<%= user._id %>">
+                <!-- row -->
+                <div class="container-fluid">
+                    <div class="card shadow">
+                        <div class="card-header border-0 d-flex justify-content-between mb-4 align-items-center mb-4">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-user fa-3x me-6 "></i>
+                                <h3 class="mb-0 ml-4" id="userNameDisplay">User Details</h3>
+                            </div>
+                
+                            <button type="button" class="btn btn-primary ms-auto" id="editButton">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button type="button" class="btn btn-success ms-2 d-none" id="saveButton">
+                                <i class="fa fa-save"></i> Save
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row grid">
+                        <div class="col-xl-12">
+                            <!-- User Name Section -->
+                            <div class="d-flex mb-3">
+                                <label for="userName" class="w-25" style="color: black;">User Name:</label>
+                                <input type="text" class="form-control flex-grow-1" id="userName" value="<%= user.userName %>" readonly>
+                            </div>
+                            <!-- Email Section -->
+                            <div class="d-flex mb-3">
+                                <label for="userEmail" class="w-25" style="color: black;">Email:</label>
+                                <input type="email" class="form-control flex-grow-1" id="userEmail" value="<%= user.email %>" readonly>
+                            </div>
+                            <!-- User Type Section -->
+                            <div class="d-flex mb-3">
+                                <label for="userType" class="w-25" class="text-black" style="color: black;">User Type:</label>
+                                <select class="form-control flex-grow-1" id="userType" name="userType" disabled>
+                                    <option value="1" <%= user.userType == '1' ? 'selected' : '' %>>Professional</option>
+                                    <option value="2" <%= user.userType == '2' ? 'selected' : '' %>>Individual</option>
+                                    <option value="0" <%= user.userType == '0' ? 'selected' : '' %>>Normal</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- User Activity Graph Section -->
+                    <div class="card shadow mt-4 w-40 h-10 chart-card" >
+                        <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                            <h3 class="mb-10">User Activity</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="userActivityChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Save Confirmation Modal -->
+                    <div class="modal fade" id="saveConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="saveConfirmationModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title" id="saveConfirmationModalLabel">Save Confirmation</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                            User information updated successfully!
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+            <!-- Error Modal -->
+                    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title" id="errorModalLabel">Update Failed</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                            Failed to update user information.
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    
+            <%- include('../../partials/footer') %>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const editButton = document.getElementById('editButton');
+                const saveButton = document.getElementById('saveButton');
+                const userEmail = document.getElementById('userEmail');
+                const userType = document.getElementById('userType');
+                const userNameDisplay = document.getElementById('userNameDisplay');
+                const userName = document.getElementById('userName');
+                const userIdElement = document.getElementById('userId');
+                const userId = userIdElement ? userIdElement.value : null;
+        
+                console.log('Script loaded');
+        
+                // Existing event listener code for edit and save buttons
+                editButton.addEventListener('click', function() {
+                    console.log('Edit button clicked');
+                    userEmail.removeAttribute('readonly');
+                    userName.removeAttribute('readonly');
+                    userType.removeAttribute('disabled');
+                    userNameDisplay.contentEditable = 'true';
+        
+                    editButton.classList.add('d-none');
+                    saveButton.classList.remove('d-none');
+                });
+        
+                saveButton.addEventListener('click', function() {
+                    console.log('Save button clicked'); // Debugging line
+                    if (!userEmail.value || !userNameDisplay.innerText.trim() || !userType.value) {
+                        alert('Please fill in all fields.');
+                        return;
+                    }
+                    
+                    userEmail.setAttribute('readonly', 'readonly');
+                    userName.setAttribute('readonly', 'readonly');
+                    userType.setAttribute('disabled', 'disabled');
+                    userNameDisplay.contentEditable = 'false';
+        
+                    editButton.classList.remove('d-none');
+                    saveButton.classList.add('d-none');
+        
+                    const updatedUser = {
+                        userName: userName.value.trim(),
+                        email: userEmail.value.trim(),
+                        userType: userType.value,
+                        _id: userId
+                    };
+                    console.log('Sending data:', updatedUser);
+        
+                    fetch('/updateUser', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updatedUser)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("inside_show----------", data);
+                        if (data.success) {
+                            // alert('User information updated successfully!');
+                            $('#saveConfirmationModal').modal('show');
+                        } else {
+                            // alert('Failed to update user information.');
+                            $('#errorModal .modal-body').text('Failed to update user information.');
+                            $('#errorModal').modal('show');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while updating user information.');
+                    });
+                });
+        
+                // Fetch user activity data and initialize the chart
+                fetch(`/getUserActivity`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userId: userId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const labels = data.map(period => period.day);
+                    const values = data.map(period => period.totalProperties);
+                    const maxValue = Math.max(...values);
+                    const suggestedMax = maxValue * 2
+        
+                    const ctx = document.getElementById('userActivityChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Properties Added',
+                                data: values,
+                                // backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                // borderColor: 'rgba(54, 162, 235, 1)',
+                                backgroundColor: ['rgba(255, 99, 132, 0.2)',
+                                                    'rgba(255, 159, 64, 0.2)',
+                                                    'rgba(255, 205, 86, 0.2)',
+                                                    'rgba(75, 192, 192, 0.2)',
+                                                    'rgba(54, 162, 235, 0.2)',
+                                                    'rgba(153, 102, 255, 0.2)',
+                                                    'rgba(201, 203, 207, 0.2)'
+                                                    ],
+                                borderColor: ['rgb(255, 99, 132)',
+                                                    'rgb(255, 159, 64)',
+                                                    'rgb(255, 205, 86)',
+                                                    'rgb(75, 192, 192)',
+                                                    'rgb(54, 162, 235)',
+                                                    'rgb(153, 102, 255)',
+                                                    'rgb(201, 203, 207)'
+                                                    ],
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    suggestedMax:suggestedMax,
+                                    ticks:{
+                                        stepSize:1
+                                    }
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching user activity:', error);
+                });
+            });
+        </script>
